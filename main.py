@@ -1,0 +1,1 @@
+print('Collage Maker - Python')
