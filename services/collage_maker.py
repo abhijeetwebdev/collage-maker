@@ -1,4 +1,4 @@
-from PIL import Image, ImageOps
+from PIL import Image, ImageEnhance
 from config import PATHS
 import random
 
@@ -43,6 +43,18 @@ class CollageMaker:
         self._source_images_ref = [Image.open(u) for u in urls]
 
 
+    # add small image the color tint of target image pixel
+    def _image_overlay(self, src, color='#FFFFFF', alpha=0.5):
+        overlay = Image.new(src.mode, src.size, color)
+        bw_src = ImageEnhance.Color(src).enhance(0.0)
+        return Image.blend(bw_src, overlay, alpha)
+
+
+    # convert rgb color to hex code
+    def _rgb2hex(self, rgb):
+        return '#%02x%02x%02x' % rgb
+
+
     # start making collage image
     def generate(self):
         width, height = self._target_image_ref.size
@@ -52,9 +64,13 @@ class CollageMaker:
         y_offset = 0
         for row in self._pixel_matrix:
             for pixel in row:
+                
                 # get random image from the source images
                 rand_index = random.randrange(4)
                 temp_image = self._source_images_ref[rand_index]
+                
+                # add overlay color
+                temp_image = self._image_overlay(temp_image, self._rgb2hex(pixel))
                 
                 # merge image to the specified position
                 self._collage_image.paste(temp_image, (x_offset, y_offset))
