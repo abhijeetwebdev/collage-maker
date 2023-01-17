@@ -13,7 +13,7 @@ class CollageMaker:
         self._pixel_matrix = None
         self._collage_image = None
         self._uploads_dir = PATHS['UPLOADS']
-        self._pixel_image_size = 100
+        self._pixel_image_size = 10
 
 
     # set source image link
@@ -68,6 +68,10 @@ class CollageMaker:
                 # get random image from the source images
                 rand_index = random.randrange(4)
                 temp_image = self._source_images_ref[rand_index]
+                
+                # resize small image based on the pixel image size
+                new_size = self._pixel_image_size, self._pixel_image_size
+                temp_image.thumbnail(new_size, Image.Resampling.LANCZOS)
                 
                 # add overlay color
                 temp_image = self._image_overlay(temp_image, self._rgb2hex(pixel))
