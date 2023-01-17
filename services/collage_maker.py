@@ -1,25 +1,31 @@
 from PIL import Image, ImageOps
+from config import PATHS
+import random
 
 
 class CollageMaker:
 
     def __init__(self):
-        self._target_image_url = None
+        self._target_image = None
         self._target_image_ref = None
+        self._source_images = None
+        self._source_images_ref = None
         self._pixel_matrix = None
-        self._source_image_urls = None
+        self._collage_image = None
+        self._uploads_dir = PATHS['UPLOADS']
+        self._pixel_image_size = 100
 
 
     # set source image link
     def set_target_image(self, url):
-        self._target_image_url = url
+        self._target_image = url
         self._target_image_ref = Image.open(url)
         self._read_target_image()
 
 
     # get source image link
     def get_target_image(self):
-        return self._target_image_url
+        return self._target_image
 
 
     # read source image pixels data
@@ -33,9 +39,31 @@ class CollageMaker:
 
     # set source image link
     def set_source_images(self, urls):
-        self._source_image_urls = urls
+        self._source_images = urls
+        self._source_images_ref = [Image.open(u) for u in urls]
 
-    
+
+    # start making collage image
     def generate(self):
-        print('Start generating collage image')
+        width, height = self._target_image_ref.size
+        self._collage_image = Image.new(mode='RGB', size=(width*self._pixel_image_size, height*self._pixel_image_size))
         
+        x_offset = 0
+        y_offset = 0
+        for row in self._pixel_matrix:
+            for pixel in row:
+                # get random image from the source images
+                rand_index = random.randrange(4)
+                temp_image = self._source_images_ref[rand_index]
+                
+                # merge image to the specified position
+                self._collage_image.paste(temp_image, (x_offset, y_offset))
+                
+                # update x, y pointers
+                x_offset += self._pixel_image_size
+                if (x_offset >= self._collage_image.size[0]):
+                    x_offset = 0
+                    y_offset += self._pixel_image_size
+        
+        # save image
+        self._collage_image.save(f'{self._uploads_dir}/collage.png', 'PNG')
