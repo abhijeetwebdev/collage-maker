@@ -1,5 +1,6 @@
 from PIL import Image, ImageEnhance
 from config import CONFIG, PATHS
+import logging
 import random
 
 
@@ -16,10 +17,12 @@ class CollageMaker:
         self.collages_dir = PATHS['COLLAGES']
         self.pixel_img_size = CONFIG['PIXEL_IMAGE_SIZE']
         self.pixel_img_opacity = CONFIG['PIXEL_IMAGE_OPACITY']
+        logging.info('CollageMaker service is initialized.')
 
 
     # set source image link
     def set_target_image(self, img_name):
+        logging.info('Setting target image: {img_name}.')
         self.target_img_name = img_name
         self.target_img = Image.open(f'{self.uploads_dir}/{img_name}')
         self.read_target_image()
@@ -27,6 +30,7 @@ class CollageMaker:
 
     # set source image link
     def set_source_images(self, names):
+        logging.info('Setting source images: {str(names)}')
         self.src_img_names = names
         self.src_imgs = []
         for img_name in names:
@@ -38,6 +42,7 @@ class CollageMaker:
 
     # read source image pixels data
     def read_target_image(self):
+        logging.info('Loading target image data in the matrix array.')
         img_data = list(self.target_img.getdata())
         width, height = self.target_img.size
         self.pixel_matrix = [img_data[i * width:(i + 1) * width] for i in range(height)]
@@ -66,6 +71,7 @@ class CollageMaker:
 
     # start making collage image
     def generate(self):
+        logging.info('Generating collage image.')
         width, height = self.target_img.size
         self.collage_img = Image.new(mode='RGB', size=(width*self.pixel_img_size, height*self.pixel_img_size))
         

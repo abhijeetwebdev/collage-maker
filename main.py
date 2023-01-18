@@ -1,4 +1,8 @@
 from services.collage_maker import CollageMaker
+from utils import helper
+
+# setup logging
+helper.setup_logging()
 
 # image sources and dirs
 target_image = 'mario-small.jpg'
@@ -13,7 +17,6 @@ source_images = [
 # initiate and run collage maker
 def main():
     collage_maker = CollageMaker()
-
     collage_maker.set_target_image(target_image)
     collage_maker.set_source_images(source_images)
     collage_maker.generate()
