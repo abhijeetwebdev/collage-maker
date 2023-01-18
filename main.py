@@ -1,5 +1,6 @@
 from services.collage_maker import CollageMaker
 from utils import helper
+import logging
 
 # setup logging
 helper.setup_logging()
@@ -22,4 +23,7 @@ def main():
     collage_maker.generate()
 
 if __name__=='__main__':
-    main()
+    try:
+        main()
+    except Exception as err:
+        logging.error(str(err))
