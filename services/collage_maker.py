@@ -6,63 +6,63 @@ import random
 class CollageMaker:
 
     def __init__(self):
-        self._target_image = None
-        self._target_image_ref = None
-        self._source_images = None
-        self._source_images_ref = None
-        self._pixel_matrix = None
-        self._collage_image = None
-        self._uploads_dir = PATHS['UPLOADS']
-        self._collages_dir = PATHS['COLLAGES']
-        self._pixel_image_size = CONFIG['PIXEL_IMAGE_SIZE']
-        self._pixel_image_opacity = CONFIG['PIXEL_IMAGE_OPACITY']
+        self.target_image = None
+        self.target_image_ref = None
+        self.source_images = None
+        self.source_images_ref = None
+        self.pixel_matrix = None
+        self.collage_image = None
+        self.uploads_dir = PATHS['UPLOADS']
+        self.collages_dir = PATHS['COLLAGES']
+        self.pixel_image_size = CONFIG['PIXEL_IMAGE_SIZE']
+        self.pixel_image_opacity = CONFIG['PIXEL_IMAGE_OPACITY']
 
 
     # set source image link
     def set_target_image(self, url):
-        self._target_image = url
-        self._target_image_ref = Image.open(url)
-        self._read_target_image()
+        self.target_image = url
+        self.target_image_ref = Image.open(url)
+        self.read_target_image()
 
 
     # get source image link
     def get_target_image(self):
-        return self._target_image
+        return self.target_image
 
 
     # read source image pixels data
-    def _read_target_image(self):
-        image_data = list(self._target_image_ref.getdata())
-        width, height = self._target_image_ref.size
+    def read_target_image(self):
+        image_data = list(self.target_image_ref.getdata())
+        width, height = self.target_image_ref.size
         
-        self._pixel_matrix = [image_data[i * width:(i + 1) * width] for i in range(height)]
-        return self._pixel_matrix
+        self.pixel_matrix = [image_data[i * width:(i + 1) * width] for i in range(height)]
+        return self.pixel_matrix
 
 
     # set source image link
     def set_source_images(self, urls):
-        self._source_images = urls
-        self._source_images_ref = []
+        self.source_images = urls
+        self.source_images_ref = []
         for url in urls:
             source_image = Image.open(url)
-            source_image = self._crop_center(source_image)
-            self._source_images_ref.append(source_image)
+            source_image = self.crop_image_center(source_image)
+            self.source_images_ref.append(source_image)
 
 
     # add small image the color tint of target image pixel
-    def _image_overlay(self, src, color='#FFFFFF', alpha=0.5):
+    def add_image_overlay(self, src, color='#FFFFFF', alpha=0.5):
         overlay = Image.new(src.mode, src.size, color)
         bw_src = ImageEnhance.Color(src).enhance(0.0)
         return Image.blend(bw_src, overlay, alpha)
 
 
     # convert rgb color to hex code
-    def _rgb2hex(self, rgb):
+    def rgb_to_hex(self, rgb):
         return '#%02x%02x%02x' % rgb
 
 
     # crop image center, center
-    def _crop_center(self, img):
+    def crop_image_center(self, img):
         width, height = img.size
         crop_width = min(img.size)
         crop_height = min(img.size)
@@ -71,33 +71,33 @@ class CollageMaker:
 
     # start making collage image
     def generate(self):
-        width, height = self._target_image_ref.size
-        self._collage_image = Image.new(mode='RGB', size=(width*self._pixel_image_size, height*self._pixel_image_size))
+        width, height = self.target_image_ref.size
+        self.collage_image = Image.new(mode='RGB', size=(width*self.pixel_image_size, height*self.pixel_image_size))
         
         x_offset = 0
         y_offset = 0
-        for row in self._pixel_matrix:
+        for row in self.pixel_matrix:
             for pixel in row:
                 
                 # get random image from the source images
                 rand_index = random.randrange(4)
-                pixel_image = self._source_images_ref[rand_index]
+                pixel_image = self.source_images_ref[rand_index]
                 
                 # resize small image based on the pixel image size
-                pixel_image_size = self._pixel_image_size, self._pixel_image_size
+                pixel_image_size = self.pixel_image_size, self.pixel_image_size
                 pixel_image.thumbnail(pixel_image_size, Image.Resampling.LANCZOS)
                 
                 # add overlay color
-                pixel_image = self._image_overlay(pixel_image, self._rgb2hex(pixel), self._pixel_image_opacity)
+                pixel_image = self.add_image_overlay(pixel_image, self.rgb_to_hex(pixel), self.pixel_image_opacity)
                 
                 # merge image to the specified position
-                self._collage_image.paste(pixel_image, (x_offset, y_offset))
+                self.collage_image.paste(pixel_image, (x_offset, y_offset))
                 
                 # update x, y pointers
-                x_offset += self._pixel_image_size
-                if (x_offset >= self._collage_image.size[0]):
+                x_offset += self.pixel_image_size
+                if (x_offset >= self.collage_image.size[0]):
                     x_offset = 0
-                    y_offset += self._pixel_image_size
+                    y_offset += self.pixel_image_size
         
         # save image
-        self._collage_image.save(f'{self._collages_dir}/collage.png', 'PNG')
+        self.collage_image.save(f'{self.collages_dir}/collage.png', 'PNG')
