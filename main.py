@@ -1,19 +1,14 @@
 from services.collage_maker import CollageMaker
 from utils import helper
+from config import PATHS
 import logging
 
 # setup logging
 helper.setup_logging()
 
 # image sources and dirs
-target_image = 'mario-small.jpg'
-source_images = [
-    '1.png',
-    '2.jpg',
-    '3.jpg',
-    '4.jpg',
-    '5.jpg'
-]
+target_image = 'car.jpg'
+source_images = helper.get_images_from_dir(PATHS['UPLOADS'])
 
 # initiate and run collage maker
 def main():
