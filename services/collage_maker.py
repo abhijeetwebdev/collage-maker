@@ -20,8 +20,8 @@ class CollageMaker:
 
     # set source image link
     def set_target_image(self, url):
-        self.target_image = url
-        self.target_image_ref = Image.open(url)
+        self.target_image = f'{self.uploads_dir}/{url}'
+        self.target_image_ref = Image.open(self.target_image)
         self.read_target_image()
 
 
@@ -44,7 +44,8 @@ class CollageMaker:
         self.source_images = urls
         self.source_images_ref = []
         for url in urls:
-            source_image = Image.open(url)
+            source_image = f'{self.uploads_dir}/{url}'
+            source_image = Image.open(source_image)
             source_image = self.crop_image_center(source_image)
             self.source_images_ref.append(source_image)
 
