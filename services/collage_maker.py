@@ -1,5 +1,5 @@
 from PIL import Image, ImageEnhance
-from config import PATHS
+from config import CONFIG, PATHS
 import random
 
 
@@ -13,7 +13,9 @@ class CollageMaker:
         self._pixel_matrix = None
         self._collage_image = None
         self._uploads_dir = PATHS['UPLOADS']
-        self._pixel_image_size = 10
+        self._collages_dir = PATHS['COLLAGES']
+        self._pixel_image_size = CONFIG['PIXEL_IMAGE_SIZE']
+        self._pixel_image_opacity = CONFIG['PIXEL_IMAGE_OPACITY']
 
 
     # set source image link
@@ -74,7 +76,7 @@ class CollageMaker:
                 temp_image.thumbnail(new_size, Image.Resampling.LANCZOS)
                 
                 # add overlay color
-                temp_image = self._image_overlay(temp_image, self._rgb2hex(pixel))
+                temp_image = self._image_overlay(temp_image, self._rgb2hex(pixel), self._pixel_image_opacity)
                 
                 # merge image to the specified position
                 self._collage_image.paste(temp_image, (x_offset, y_offset))
@@ -86,4 +88,4 @@ class CollageMaker:
                     y_offset += self._pixel_image_size
         
         # save image
-        self._collage_image.save(f'{self._uploads_dir}/collage.png', 'PNG')
+        self._collage_image.save(f'{self._collages_dir}/collage.png', 'PNG')
