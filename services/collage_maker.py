@@ -42,7 +42,11 @@ class CollageMaker:
     # set source image link
     def set_source_images(self, urls):
         self._source_images = urls
-        self._source_images_ref = [Image.open(u) for u in urls]
+        self._source_images_ref = []
+        for url in urls:
+            source_image = Image.open(url)
+            source_image = self._crop_center(source_image)
+            self._source_images_ref.append(source_image)
 
 
     # add small image the color tint of target image pixel
@@ -57,6 +61,14 @@ class CollageMaker:
         return '#%02x%02x%02x' % rgb
 
 
+    # crop image center, center
+    def _crop_center(self, img):
+        width, height = img.size
+        crop_width = min(img.size)
+        crop_height = min(img.size)
+        return img.crop(((width - crop_width) // 2, (height - crop_height) // 2, (width + crop_width) // 2, (height + crop_height) // 2))
+
+
     # start making collage image
     def generate(self):
         width, height = self._target_image_ref.size
@@ -69,17 +81,17 @@ class CollageMaker:
                 
                 # get random image from the source images
                 rand_index = random.randrange(4)
-                temp_image = self._source_images_ref[rand_index]
+                pixel_image = self._source_images_ref[rand_index]
                 
                 # resize small image based on the pixel image size
-                new_size = self._pixel_image_size, self._pixel_image_size
-                temp_image.thumbnail(new_size, Image.Resampling.LANCZOS)
+                pixel_image_size = self._pixel_image_size, self._pixel_image_size
+                pixel_image.thumbnail(pixel_image_size, Image.Resampling.LANCZOS)
                 
                 # add overlay color
-                temp_image = self._image_overlay(temp_image, self._rgb2hex(pixel), self._pixel_image_opacity)
+                pixel_image = self._image_overlay(pixel_image, self._rgb2hex(pixel), self._pixel_image_opacity)
                 
                 # merge image to the specified position
-                self._collage_image.paste(temp_image, (x_offset, y_offset))
+                self._collage_image.paste(pixel_image, (x_offset, y_offset))
                 
                 # update x, y pointers
                 x_offset += self._pixel_image_size
