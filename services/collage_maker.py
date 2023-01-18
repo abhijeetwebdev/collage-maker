@@ -73,9 +73,8 @@ class CollageMaker:
         y_offset = 0
         for row in self.pixel_matrix:
             for pixel in row:
-                
                 # get random image from the source images
-                rand_index = random.randrange(4)
+                rand_index = random.randrange(len(self.src_img_names))
                 pixel_img = self.src_imgs[rand_index]
                 
                 # resize small image based on the pixel image size
