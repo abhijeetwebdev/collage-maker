@@ -1,0 +1,10 @@
+- [X] Make opacity configurable
+- [X] Move opacity and image size to config
+- [X] Crop source images to square (center, center)
+- [X] Dynamic source image selection from dirs
+- [X] Add logs
+- [X] Add exception handling
+- [X] Add support for PNGs
+- [X] Add target file size (resolution) limit
+- [] Create an API
+- [] Create UI to accept images and showing collage
