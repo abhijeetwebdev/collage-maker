@@ -28,9 +28,7 @@ Install dependencies.
 pip install -r requirements.txt
 ```
 
-Rename "sample.env" file to ".env" and configure your DB credentials in the file.
-
-## Development
+## Run Application
 Run the main.py file with the upload/download as action param:
 
 ```sh
